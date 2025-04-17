@@ -1,48 +1,335 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML5 API-k</title>
-    <link rel="stylesheet" href="style.css">
-    <script defer src="html5.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>React feladat</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    nav {
+      background-color: #333;
+      padding: 10px;
+    }
+    nav button {
+      margin-right: 10px;
+      padding: 10px;
+      color: white;
+      background-color: #444;
+      border: none;
+      cursor: pointer;
+    }
+    nav button:hover {
+      background-color: #666;
+    }
+    #app {
+      padding: 20px;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 200px);
+      gap: 10px;
+      margin-top: 20px;
+      background-color: #ccc;
+      color: black;
+     
+    }
+    .square {
+      width: 200px;
+      height: 200px;
+      font-size: 10em;
+      text-align: center;
+      vertical-align: middle;
+      line-height: 200px;
+      border: 1px solid #333;
+      cursor: pointer;
+    }
+    .calculator {
+      max-width: 240px;
+      margin: 20px auto;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+    }
+    .calculator-screen {
+      width: 100%;
+      height: 40px;
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      text-align: right;
+      padding-right: 10px;
+      box-sizing: border-box;
+      color: black;
+    }
+    .calculator-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+    .calculator-buttons button {
+      padding: 15px;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      font-size: 1.1em;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+  </style>
 </head>
 <body>
-
-    <header>
-        <h1 class="neon-text">Web-programozás-1 Előadás Házi feladat</h1>
-        <p class="sub-heading">Modern fejlesztési technológiák</p>
-    </header>
-
-<nav>
+  <header>
+    <h1 class="neon-text">Web-programozás-1 Előadás Házi feladat</h1>
+    <p class="sub-heading">Modern fejlesztési technológiák</p>
+</header>
+  <nav>
     <ul>
-        <li ><a href="index.html"><i class="fas fa-home"></i> Főoldal</a></li>
+     
+        <li ><a href="index.html" ><i class="fas fa-home"></i> Főoldal</a></li>
         <li ><a href="tablazat.html"><i class="fas fa-table"></i> Táblázat</a></li>
-        <li><a href="html5.html" class="active"><i class="fas fa-code"></i> HTML5 API-k</a></li>
+        <li><a href="html5.html"><i class="fas fa-code"></i> HTML5 API-k</a></li>
         <li ><a href="chart.html"><i class="fas fa-chart-line"></i> Chart.js</a></li>
         <li ><a href="ajax.html"><i class="fas fa-sync"></i> AJAX</a></li>
         <li ><a href="oojs.html"><i class="fas fa-cogs"></i> OOJS</a></li>
-        <li ><a href="react.html"><i class="fas fa-"></i> REACT</a></li>
+        <li ><a href="react.html" class="active"><i class="fas fa-sync"></i> REACT</a></li>
     </ul>
 </nav>
-
-<section id="content">
-    <h2>HTML5 API-k példák</h2>
-    <button onclick="getLocation()">Geolocation API</button>
-    <p id="location"></p>
-
-    <button onclick="startWorker()">Web Worker</button>
-    <p id="workerResult"></p>
-
-    <canvas id="canvas" width="200" height="200"></canvas>
-</section>
-
-<footer>
+  <nav>
+    <button onclick="setView('counter')">Számláló</button>
+<button onclick="setView('mirror')">Szövegfordító</button>
+<button onclick="setView('tictactoe')">Tic Tac Toe</button>
+<button onclick="setView('calculator')">Számológép</button>
+<button onclick="setView('rock')">Kő-Papír-Olló</button>
+<button onclick="setView('guess')">Számkitaláló</button>
+ 
+  </nav>
+  <div id="app"></div>
+ 
+  <script type="text/babel">
+    const { useState } = React;
+    const container = document.getElementById("app");
+    const root = ReactDOM.createRoot(container);
+    function RockPaperScissors() {
+      const choices = ['Kő', 'Papír', 'Olló'];
+      const [playerChoice, setPlayerChoice] = useState('');
+      const [computerChoice, setComputerChoice] = useState('');
+      const [result, setResult] = useState('');
+ 
+      function play(choice) {
+        const computer = choices[Math.floor(Math.random() * 3)];
+        setPlayerChoice(choice);
+        setComputerChoice(computer);
+ 
+        if (choice === computer) setResult("Döntetlen!");
+        else if (
+          (choice === "Kő" && computer === "Olló") ||
+          (choice === "Papír" && computer === "Kő") ||
+          (choice === "Olló" && computer === "Papír")
+        ) setResult("Nyertél!");
+        else setResult("Vesztettél!");
+      }
+ 
+      return (
+        <div>
+          <h2>Kő-Papír-Olló</h2>
+          <div>
+            {choices.map((choice, index) => (
+              <button key={index} onClick={() => play(choice)}>{choice}</button>
+            ))}
+          </div>
+          <p>Te választottad: {playerChoice}</p>
+          <p>Számítógép: {computerChoice}</p>
+          <h3>{result}</h3>
+        </div>
+      );
+    }
+ 
+    function GuessTheNumber() {
+      const [target, setTarget] = useState(() => Math.floor(Math.random() * 100) + 1);
+      const [guess, setGuess] = useState('');
+      const [message, setMessage] = useState('');
+ 
+      function handleGuess() {
+        const num = parseInt(guess);
+        if (isNaN(num)) {
+          setMessage("Adj meg egy számot!");
+          return;
+        }
+        if (num === target) {
+          setMessage("Gratulálok! Eltaláltad!");
+        } else if (num < target) {
+          setMessage("Túl alacsony!");
+        } else {
+          setMessage("Túl magas!");
+        }
+      }
+ 
+      function resetGame() {
+        setTarget(Math.floor(Math.random() * 100) + 1);
+        setGuess('');
+        setMessage('');
+      }
+ 
+      return (
+        <div>
+          <h2>Számkitaláló játék (1–100)</h2>
+          <input
+            type="text"
+            value={guess}
+            onChange={(e) => setGuess(e.target.value)}
+            placeholder="Tippelj egy számot!"
+          />
+          <button onClick={handleGuess}>Tippelés</button>
+          <button onClick={resetGame}>Új játék</button>
+          <p>{message}</p>
+        </div>
+      );
+    }
+ 
+ 
+    function Counter() {
+      const [count, setCount] = useState(0);
+      return (
+        <div>
+          <h2>Számláló</h2>
+          <p>Érték: {count}</p>
+          <button onClick={() => setCount(count + 1)}>Növel</button>
+          <button onClick={() => setCount(count - 1)}>Csökkent</button>
+        </div>
+      );
+    }
+ 
+    function Mirror() {
+      const [text, setText] = useState("");
+ 
+      function handleChange(e) {
+        setText(e.target.value.split("").reverse().join("")); // Megfordítja a szöveget
+      }
+ 
+      return (
+        <div>
+          <h2>Szövegfordító</h2>
+          <input
+            type="text"
+            value={text}
+            onChange={handleChange}
+            placeholder="Írj be valamit..."
+          />
+          <p>Visszatükrözve: {text}</p>
+        </div>
+      );
+    }
+ 
+    function TicTacToe() {
+      const [squares, setSquares] = useState(Array(9).fill(null));
+      const [xIsNext, setXIsNext] = useState(true);
+ 
+      function handleClick(i) {
+        if (squares[i] || calculateWinner(squares)) return;
+        const next = squares.slice();
+        next[i] = xIsNext ? "X" : "O";
+        setSquares(next);
+        setXIsNext(!xIsNext);
+      }
+ 
+      const winner = calculateWinner(squares);
+      let status = winner ? `Győztes: ${winner}` : `Következő: ${xIsNext ? "X" : "O"}`;
+ 
+      return (
+        <div>
+          <h2>Tic Tac Toe</h2>
+          <div>{status}</div>
+          <div className="board">
+            {squares.map((val, i) => (
+              <div key={i} className="square" onClick={() => handleClick(i)}>{val}</div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+ 
+    function calculateWinner(sq) {
+      const lines = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+      ];
+      for (let [a, b, c] of lines) {
+        if (sq[a] && sq[a] === sq[b] && sq[a] === sq[c]) {
+          return sq[a];
+        }
+      }
+      return null;
+    }
+ 
+    function Calculator() {
+      const [input, setInput] = useState("");
+ 
+      function handleClick(value) {
+        if (value === "C") {
+          setInput("");
+        } else if (value === "=") {
+          try {
+            setInput(eval(input).toString());
+          } catch {
+            setInput("Hiba");
+          }
+        } else {
+          setInput(input + value);
+        }
+      }
+ 
+      const buttons = [
+        "7", "8", "9", "/",
+        "4", "5", "6", "*",
+        "1", "2", "3", "-",
+        "0", ".", "=", "+",
+        "C"
+      ];
+ 
+      return (
+        <div>
+          <h2>Számológép</h2>
+          <div className="calculator">
+            <div className="calculator-screen">{input}</div>
+            <div className="calculator-buttons">
+              {buttons.map((b, i) => (
+                <button key={i} onClick={() => handleClick(b)}>{b}</button>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+ 
+    function setView(view) {
+      if (view === 'counter') root.render(<Counter />);
+      if (view === 'mirror') root.render(<Mirror />);
+      if (view === 'tictactoe') root.render(<TicTacToe />);
+      if (view === 'calculator') root.render(<Calculator />);
+      if (view === 'rock') root.render(<RockPaperScissors />);
+  if (view === 'guess') root.render(<GuessTheNumber />);
+ 
+    }
+ 
+    setView('counter');
+  </script>
+  <footer>
     <p>Készítette: <strong>[Takács Milán]</strong> - Neptun kód: <strong>[KWKABN]</strong></p>
         <p>Készítette: <strong>[Türi Krisztián Jenő]</strong> - Neptun kód: <strong>[NLI24V]</strong></p>
 </footer>
-
 </body>
 </html>
+ 
