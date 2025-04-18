@@ -114,3 +114,4 @@ async function deleteData() {
   renderList();
   responseMessage.textContent = "🗑️ Bejegyzés törölve!";
 }
+

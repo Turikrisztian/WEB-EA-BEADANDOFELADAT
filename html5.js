@@ -34,6 +34,8 @@ function getLocation() {
       document.getElementById("workerResult").textContent = "A böngésződ nem támogatja a Web Workert.";
     }
   }
+
+  
   
   // === CANVAS RAJZ ===
   window.addEventListener("load", () => {
@@ -50,4 +52,33 @@ function getLocation() {
     ctx.fillStyle = "#fff";
     ctx.fillText("HTML5 Canvas", 40, 190);
   });
+  // === SZIMULÁLT SSE (kliensoldali setInterval) ===
+  let sseInterval = null;
+  let sseCount = 0;
+  
+  function startSSE() {
+    if (sseInterval !== null) {
+      console.log("Már fut az SSE.");
+      return;
+    }
+  
+    const output = document.getElementById("sse-output");
+    sseCount = 0;
+    output.innerHTML = ""; // előző törlése
+  
+    sseInterval = setInterval(() => {
+      sseCount++;
+      const p = document.createElement("p");
+      p.textContent = `Szimulált esemény #${sseCount}`;
+      output.appendChild(p);
+    }, 1000);
+  }
+  
+  function stopSSE() {
+    if (sseInterval !== null) {
+      clearInterval(sseInterval);
+      sseInterval = null;
+      console.log("SSE leállítva.");
+    }
+  }
   
